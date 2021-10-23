@@ -12,7 +12,7 @@ public class Task1 implements SundialExecute {
     @Override
     public void execute() {
         Date date = new Date();
-//        System.out.println(date + " 1234");
+        System.out.println(date + " 1234");
     }
 
 //    @QuartzJob(name = "test2")
