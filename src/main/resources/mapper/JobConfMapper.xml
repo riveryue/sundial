@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="sundial.dao.TaskConfDao">
+
+    <sql id="base_column">id, task_name, status, cron</sql>
+
+    <select id="query" parameterType="sundial.query.TaskConfQuery" resultType="sundial.entity.TaskConfDO">
+        SELECT <include refid="base_column"/>  FROM job_conf where 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="taskName != null">
+            and task_name = #{taskName}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="cron != null">
+            and cron = #{cron}
+        </if>
+    </select>
+</mapper>

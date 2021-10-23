@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: sundial
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/com.umbrella?serverTimezone=GMT%2B8&useSSL=false
+    username: root
+    password: qwer
+server:
+  port: 9091
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.umbrella.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
