@@ -13,13 +13,17 @@ import java.util.HashMap;
 @Slf4j
 public class TaskPool {
 
-    private static HashMap<String, SundialExecute> jobPool = Maps.newHashMap();
+    private static HashMap<String, SundialExecute> taskPool = Maps.newHashMap();
 
-    public void put(String jobName, SundialExecute task) {
-        jobPool.put(jobName, task);
+    public void put(String taskName, SundialExecute task) {
+        taskPool.put(taskName, task);
     }
 
-    public SundialExecute get(String jobName) {
-        return jobPool.get(jobName);
+    public SundialExecute get(String taskName) {
+        return taskPool.get(taskName);
+    }
+
+    public HashMap<String, SundialExecute> getAll() {
+        return taskPool;
     }
 }

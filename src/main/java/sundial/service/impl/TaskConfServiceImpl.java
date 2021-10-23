@@ -9,6 +9,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author yao
  */
@@ -19,10 +22,20 @@ public class TaskConfServiceImpl implements TaskConfService {
     private TaskConfDao taskConfDao;
 
     @Override
-    public TaskConfDTO query(TaskConfQuery taskConfQuery) {
-        TaskConfDO taskConfDO = taskConfDao.query(taskConfQuery);
+    public TaskConfDTO queryByTaskName(String taskName) {
+        TaskConfDO taskConfDO = taskConfDao.queryByTaskName(taskName);
         TaskConfDTO taskConfDTO = new TaskConfDTO();
         BeanUtils.copyProperties(taskConfDO, taskConfDTO);
         return taskConfDTO;
+    }
+
+    @Override
+    public List<TaskConfDTO> query(TaskConfQuery taskConfQuery) {
+        List<TaskConfDO> taskConfDOS = taskConfDao.query(taskConfQuery);
+        return taskConfDOS.stream().map(taskConfDO -> {
+            TaskConfDTO taskConfDTO = new TaskConfDTO();
+            BeanUtils.copyProperties(taskConfDO, taskConfDTO);
+            return taskConfDTO;
+        }).collect(Collectors.toList());
     }
 }

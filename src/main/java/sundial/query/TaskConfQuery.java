@@ -18,7 +18,7 @@ public class TaskConfQuery {
         return this;
     }
 
-    public TaskConfQuery addParamJobName(String jobName) {
+    public TaskConfQuery addParamTaskName(String jobName) {
         this.taskName = jobName;
         return this;
     }

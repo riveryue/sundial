@@ -1,9 +1,6 @@
 package sundial.config;
 
 import com.google.common.collect.Maps;
-import sundial.TaskPool;
-import sundial.SundialExecute;
-import sundial.annotation.SundialTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -16,6 +13,11 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
+import sundial.SundialExecute;
+import sundial.TaskPool;
+import sundial.annotation.SundialTask;
+import sundial.dto.TaskConfDTO;
+import sundial.service.TaskConfService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +39,10 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
     @Autowired
     private TaskPool taskPool;
 
-    private static HashMap<SundialExecute, Method> methodHashMap = Maps.newHashMap();
+    @Autowired
+    private TaskConfService taskConfService;
+
+    private static HashMap<SundialExecute, String> methodHashMap = Maps.newHashMap();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -66,7 +71,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
                 Method executeMethod = taskEntry.getKey();
                 SundialTask task = taskEntry.getValue();
                 registJobHandler(task, bean, executeMethod);
-                methodHashMap.put((SundialExecute) bean, executeMethod);
+                methodHashMap.put((SundialExecute) bean, task.name());
             }
         }
     }
@@ -99,13 +104,11 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        //*/5 * * * * ?
-        //todo get cron expression from mysql
-        int gap = 5;
-        for (Map.Entry<SundialExecute, Method> entry : methodHashMap.entrySet()) {
-            String cron = "*/" + gap + " * * * * ?";
-            taskRegistrar.addTriggerTask(entry.getKey(), triggerContext -> new CronTrigger(cron).nextExecutionTime(triggerContext));
-            gap += 3;
+        for (Map.Entry<SundialExecute, String> entry : methodHashMap.entrySet()) {
+            taskRegistrar.addTriggerTask(entry.getKey(), triggerContext -> {
+                TaskConfDTO taskConfDTO = taskConfService.queryByTaskName(entry.getValue());
+                return new CronTrigger(taskConfDTO.getCron()).nextExecutionTime(triggerContext);
+            });
         }
     }
 }

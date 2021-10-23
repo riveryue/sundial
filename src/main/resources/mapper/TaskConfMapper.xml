@@ -4,6 +4,10 @@
 
     <sql id="base_column">id, task_name, status, cron</sql>
 
+    <select id="queryByTaskName" parameterType="string" resultType="sundial.entity.TaskConfDO">
+        SELECT <include refid="base_column"/>  FROM task_conf where task_name = #{taskName}
+    </select>
+
     <select id="query" parameterType="sundial.query.TaskConfQuery" resultType="sundial.entity.TaskConfDO">
         SELECT <include refid="base_column"/>  FROM task_conf where 1 = 1
         <if test="id != null">
