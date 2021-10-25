@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-@MapperScan("sundial.dao")
+@MapperScan(basePackages = {"sundial.dao"})
 public class SundialApplication {
 
 	public static void main(String[] args) {

@@ -4,8 +4,32 @@
 
     <sql id="base_column">id, task_name, status, cron</sql>
 
+    <insert id="insert" parameterType="taskConfDO">
+        insert into task_conf (task_name, status, cron) values (#{taskName}, #{status}, #{cron})
+    </insert>
+
+    <update id="update" parameterType="taskConfDO">
+        update task_conf
+        <set>
+            <if test="taskName != null">
+                task_name = #{taskName},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="cron != null">
+                cron = #{cron}
+            </if>
+        </set>
+        where ID = #{id}
+    </update>
+
     <select id="queryByTaskName" parameterType="string" resultType="taskConfDO">
         SELECT <include refid="base_column"/>  FROM task_conf where task_name = #{taskName}
+    </select>
+
+    <select id="queryById" parameterType="java.lang.Integer" resultType="taskConfDO">
+        SELECT <include refid="base_column"/>  FROM task_conf where id = #{id}
     </select>
 
     <select id="query" parameterType="sundial.query.TaskConfQuery" resultType="taskConfDO">

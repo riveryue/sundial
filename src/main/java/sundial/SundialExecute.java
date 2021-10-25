@@ -33,7 +33,7 @@ public interface SundialExecute extends Runnable {
         }
         TaskConfDTO taskConfDTO = taskConfService.queryByTaskName(annoVal);
         //todo create enum
-        if (taskConfDTO.getStatus().equals(2)) {
+        if (taskConfDTO != null && taskConfDTO.getStatus().equals(2)) {
             return;
         }
         execute();

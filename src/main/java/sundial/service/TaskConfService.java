@@ -12,5 +12,11 @@ public interface TaskConfService {
 
     TaskConfDTO queryByTaskName(String taskName);
 
+    TaskConfDTO queryById(Integer id);
+
     List<TaskConfDTO> query(TaskConfQuery taskConfQuery);
+
+    Integer insert(TaskConfDTO taskConfDTO);
+
+    Integer update(TaskConfDTO taskConfDTO);
 }

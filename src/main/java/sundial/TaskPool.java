@@ -23,6 +23,14 @@ public class TaskPool {
         return taskPool.get(taskName);
     }
 
+    public void remove(String taskName) {
+        taskPool.remove(taskName);
+    }
+
+    public SundialExecute replace(String taskName, SundialExecute sundialExecute) {
+        return taskPool.replace(taskName, sundialExecute);
+    }
+
     public HashMap<String, SundialExecute> getAll() {
         return taskPool;
     }
