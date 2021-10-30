@@ -1,6 +1,8 @@
 package sundial.controller;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import sundial.TaskPool;
 import sundial.SundialExecute;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,14 @@ public class TaskController {
 
     @Autowired
     private TaskConfService taskConfService;
+
+    @GetMapping("/sundial/home")
+    public ModelAndView taskList(Model model) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("cronList", taskConfService.query(new TaskConfQuery()));
+        modelAndView.setViewName("task-list");
+        return modelAndView;
+    }
 
     @GetMapping("/sundial/list")
     public Result<TaskConfDTO> taskList() {

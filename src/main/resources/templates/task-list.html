@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>定时任务管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<style type="text/css">
+    body {
+        width: 80%;
+        text-align: center;
+        margin: auto;
+    }
+
+    table {
+        text-align: center;
+        width: 100%;
+    }
+
+    a {
+        border: 1px black solid;
+        color: white;
+        margin: 3px;
+        background-color: cornflowerblue;
+    }
+</style>
+<body>
+<h1>任务调度中心</h1>
+<table>
+    <thead>
+    <tr>
+        <td>序号</td>
+        <td>任务名称</td>
+        <td>状态</td>
+        <td>cron表达式</td>
+        <td>操作</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cron,iterStat:${cronList}">
+        <td th:text="${iterStat.count}"></td>
+        <td th:text="${cron.taskName}"></td>
+        <td th:text="${cron.status} == 1 ? '启用' : '禁用'"></td>
+        <td th:text="${cron.cron}"></td>
+        <td>
+            <a style="cursor: pointer" th:data-cron-key="${cron.id}"
+               th:data-cron-expression="${cron.cron}"
+               onclick="editTaskCron(this)">编辑cron</a>
+            <a style="cursor: pointer" th:data-cron-key="${cron.status}"
+               th:data-cron-expression="${cron.status}"
+               onclick="runTaskCron(this)">执行</a>
+            <a style="cursor: pointer" th:data-cron-key="${cron.status}"
+               th:data-cron-status="${cron.status}"
+               th:text="${cron.status} == 1 ? '暂停':'恢复'"
+               onclick="changeStatusTaskCron(this)">暂停</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script type="text/javascript">
+    var AppConsts = {
+        ENABLED: 1,
+        DISABLED: 2
+    }
+
+    function editTaskCron(aObj) {
+        let taskId = aObj.getAttribute("data-cron-key");
+        let originalCron = aObj.getAttribute("data-cron-expression");
+        let newCron = window.prompt("请输入新的表达式:", originalCron);
+        if (newCron === null || newCron === '') {
+            return;
+        }
+        var task = {"id": taskId,"cron": newCron};
+        post("/sundial/update", "/sundial/home", JSON.stringify(task));
+    }
+
+    function runTaskCron(aObj) {
+        let cronKey = aObj.getAttribute("data-cron-key");
+        let formData = new FormData();
+        formData.append("cronKey", cronKey);
+        post("/sundial/update", "/scheduled/task/taskList", formData);
+    }
+
+    function changeStatusTaskCron(aObj) {
+        let cronKey = aObj.getAttribute("data-cron-key");
+        let status = aObj.getAttribute("data-cron-status");
+        if (status == AppConsts.ENABLED) {
+            status = AppConsts.DISABLED;
+        } else {
+            status = AppConsts.ENABLED;
+        }
+        let formData = new FormData();
+        formData.append("cronKey", cronKey);
+        formData.append("status", status);
+        post("/scheduled/task/changeStatusTaskCron", "/scheduled/task/taskList", formData);
+    }
+
+    function post(reqUrl, successUrl, formData) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState !== 4) {
+                return;
+            }
+            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+                var resJson = JSON.parse(xhr.responseText);
+                if (resJson.code !== 0) {
+                    return;
+                }
+                location.href = successUrl;
+            } else {
+                console.log("required failed " + xhr.status);
+            }
+        };
+        xhr.open("put", reqUrl, true);
+        xhr.setRequestHeader('content-type', 'application/json');
+        xhr.send(formData);
+    }
+</script>
+</html>
