@@ -47,12 +47,12 @@
                th:task.cron="${task.cron}"
                onclick="editTaskCron(this)">编辑cron</a>
             <a style="cursor: pointer" th:data-cron-key="${task.status}"
-               th:data-cron-expression="${task.status}"
+               th:taskName="${task.taskName}"
                onclick="runTaskCron(this)">执行</a>
             <a style="cursor: pointer" th:data-cron-key="${task.status}"
                th:data-cron-status="${task.status}"
-               th:text="${task.status} == 1 ? '暂停':'恢复'"
-               onclick="changeStatusTaskCron(this)">暂停</a>
+               th:text="${task.status} == 1 ? '禁用':'启用'"
+               onclick="changeStatusTaskCron(this)"></a>
         </td>
     </tr>
     </tbody>
@@ -72,14 +72,14 @@
             return;
         }
         var task = {"id": taskId,"cron": newCron};
-        post("/sundial/update", "/sundial/home", JSON.stringify(task));
+        post("/sundial/update", "put", "/sundial/home", JSON.stringify(task));
     }
 
     function runTaskCron(aObj) {
-        let cronKey = aObj.getAttribute("data-cron-key");
+        let taskName = aObj.getAttribute("taskName");
         let formData = new FormData();
-        formData.append("cronKey", cronKey);
-        post("/sundial/update", "/scheduled/task/taskList", formData);
+        formData.append("taskName", taskName);
+        post("/sundial/execute?taskName=" + taskName, "get", "/scheduled/task/taskList?taskName=" + taskName, null);
     }
 
     function changeStatusTaskCron(aObj) {
@@ -96,7 +96,7 @@
         post("/scheduled/task/changeStatusTaskCron", "/scheduled/task/taskList", formData);
     }
 
-    function post(reqUrl, successUrl, formData) {
+    function post(reqUrl, reqMet, successUrl, formData) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (xhr.readyState !== 4) {
@@ -106,6 +106,7 @@
                 var resJson = JSON.parse(xhr.responseText);
                 if (resJson.data) {
                     window.location.reload();
+                    alert('操作成功');
                     return;
                 } else {
                     alert('system error');
@@ -114,7 +115,7 @@
                 console.log("required failed " + xhr.status);
             }
         };
-        xhr.open("put", reqUrl, true);
+        xhr.open(reqMet, reqUrl, true);
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.send(formData);
     }
