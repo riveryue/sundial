@@ -22,6 +22,7 @@
         margin: 3px;
         background-color: cornflowerblue;
     }
+
 </style>
 <body>
 <h1>任务调度中心</h1>
@@ -66,7 +67,7 @@
     function editTaskCron(aObj) {
         let taskId = aObj.getAttribute("data-cron-key");
         let originalCron = aObj.getAttribute("data-cron-expression");
-        let newCron = window.prompt("请输入新的表达式:", originalCron);
+        let newCron = window.prompt("请输入新的cron表达式:", originalCron);
         if (newCron === null || newCron === '') {
             return;
         }
@@ -103,10 +104,12 @@
             }
             if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
                 var resJson = JSON.parse(xhr.responseText);
-                if (resJson.code !== 0) {
+                if (resJson.data) {
+                    window.location.reload();
                     return;
+                } else {
+                    alert('system error');
                 }
-                location.href = successUrl;
             } else {
                 console.log("required failed " + xhr.status);
             }
