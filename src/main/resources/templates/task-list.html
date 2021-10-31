@@ -37,21 +37,21 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="cron,iterStat:${cronList}">
+    <tr th:each="task,iterStat:${cronList}">
         <td th:text="${iterStat.count}"></td>
-        <td th:text="${cron.taskName}"></td>
-        <td th:text="${cron.status} == 1 ? '启用' : '禁用'"></td>
-        <td th:text="${cron.cron}"></td>
+        <td th:text="${task.taskName}"></td>
+        <td th:text="${task.status} == 1 ? '启用' : '禁用'"></td>
+        <td th:text="${task.cron}"></td>
         <td>
-            <a style="cursor: pointer" th:data-cron-key="${cron.id}"
-               th:data-cron-expression="${cron.cron}"
+            <a style="cursor: pointer" th:task.id="${task.id}"
+               th:task.cron="${task.cron}"
                onclick="editTaskCron(this)">编辑cron</a>
-            <a style="cursor: pointer" th:data-cron-key="${cron.status}"
-               th:data-cron-expression="${cron.status}"
+            <a style="cursor: pointer" th:data-cron-key="${task.status}"
+               th:data-cron-expression="${task.status}"
                onclick="runTaskCron(this)">执行</a>
-            <a style="cursor: pointer" th:data-cron-key="${cron.status}"
-               th:data-cron-status="${cron.status}"
-               th:text="${cron.status} == 1 ? '暂停':'恢复'"
+            <a style="cursor: pointer" th:data-cron-key="${task.status}"
+               th:data-cron-status="${task.status}"
+               th:text="${task.status} == 1 ? '暂停':'恢复'"
                onclick="changeStatusTaskCron(this)">暂停</a>
         </td>
     </tr>
@@ -65,9 +65,9 @@
     }
 
     function editTaskCron(aObj) {
-        let taskId = aObj.getAttribute("data-cron-key");
-        let originalCron = aObj.getAttribute("data-cron-expression");
-        let newCron = window.prompt("请输入新的cron表达式:", originalCron);
+        let taskId = aObj.getAttribute("task.id");
+        let originalCron = aObj.getAttribute("task.cron");
+        let newCron = window.prompt("请输入cron表达式:", originalCron);
         if (newCron === null || newCron === '') {
             return;
         }
