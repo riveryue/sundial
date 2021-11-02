@@ -49,8 +49,8 @@
             <a style="cursor: pointer" th:data-cron-key="${task.status}"
                th:taskName="${task.taskName}"
                onclick="runTaskCron(this)">执行</a>
-            <a style="cursor: pointer" th:data-cron-key="${task.status}"
-               th:data-cron-status="${task.status}"
+            <a style="cursor: pointer" th:task.id ="${task.id}"
+               th:taskStatus="${task.status}"
                th:text="${task.status} == 1 ? '禁用':'启用'"
                onclick="changeStatusTaskCron(this)"></a>
         </td>
@@ -59,44 +59,33 @@
 </table>
 </body>
 <script type="text/javascript">
-    var AppConsts = {
-        ENABLED: 1,
-        DISABLED: 2
-    }
 
-    function editTaskCron(aObj) {
-        let taskId = aObj.getAttribute("task.id");
-        let originalCron = aObj.getAttribute("task.cron");
+    function editTaskCron(obj) {
+        let taskId = obj.getAttribute("task.id");
+        let originalCron = obj.getAttribute("task.cron");
         let newCron = window.prompt("请输入cron表达式:", originalCron);
         if (newCron === null || newCron === '') {
             return;
         }
         var task = {"id": taskId,"cron": newCron};
-        post("/sundial/update", "put", "/sundial/home", JSON.stringify(task));
+        post("/sundial/update", "put", JSON.stringify(task));
     }
 
-    function runTaskCron(aObj) {
-        let taskName = aObj.getAttribute("taskName");
+    function runTaskCron(obj) {
+        let taskName = obj.getAttribute("taskName");
         let formData = new FormData();
         formData.append("taskName", taskName);
-        post("/sundial/execute?taskName=" + taskName, "get", "/scheduled/task/taskList?taskName=" + taskName, null);
+        post("/sundial/execute?taskName=" + taskName, "get", null);
     }
 
-    function changeStatusTaskCron(aObj) {
-        let cronKey = aObj.getAttribute("data-cron-key");
-        let status = aObj.getAttribute("data-cron-status");
-        if (status == AppConsts.ENABLED) {
-            status = AppConsts.DISABLED;
-        } else {
-            status = AppConsts.ENABLED;
-        }
-        let formData = new FormData();
-        formData.append("cronKey", cronKey);
-        formData.append("status", status);
-        post("/scheduled/task/changeStatusTaskCron", "/scheduled/task/taskList", formData);
+    function changeStatusTaskCron(obj) {
+        let taskId = obj.getAttribute("task.id");
+        let status = obj.getAttribute("taskStatus") == 1 ? 2 : 1;
+        var task = {"id": parseInt(taskId), "status": parseInt(status)};
+        post("/sundial/update", "put", JSON.stringify(task));
     }
 
-    function post(reqUrl, reqMet, successUrl, formData) {
+    function post(reqUrl, reqMet, formData) {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (xhr.readyState !== 4) {

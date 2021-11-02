@@ -70,7 +70,7 @@ public class TaskConfServiceImpl implements TaskConfService {
         TaskConfDTO existTask = this.queryById(taskConfDO.getId());
         SundialExecute sundialExecute = taskPool.get(existTask.getTaskName());
         taskPool.remove(existTask.getTaskName());
-        taskPool.put(taskConfDO.getTaskName(), sundialExecute);
+        taskPool.put(existTask.getTaskName(), sundialExecute);
         return taskConfDao.update(taskConfDO);
     }
 }
