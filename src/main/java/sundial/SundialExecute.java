@@ -1,9 +1,8 @@
 package sundial;
 
 import sundial.annotation.SundialTask;
-import sundial.constant.TaskStatusEnum;
+import sundial.constant.TaskStatus;
 import sundial.dto.TaskConfDTO;
-import sundial.query.TaskConfQuery;
 import sundial.service.TaskConfService;
 import sundial.utils.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +32,7 @@ public interface SundialExecute extends Runnable {
             }
         }
         TaskConfDTO taskConfDTO = taskConfService.queryByTaskName(annoVal);
-        if (taskConfDTO != null && taskConfDTO.getStatus().equals(TaskStatusEnum.DISABLE.getStatus())) {
+        if (taskConfDTO != null && taskConfDTO.getStatus().equals(TaskStatus.DISABLE)) {
             return;
         }
         execute();
