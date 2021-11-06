@@ -6,7 +6,7 @@ import sundial.annotation.SundialTask;
 import java.util.Date;
 
 @Component
-public class IJN implements SundialExecute {
+public class Task2 implements SundialExecute {
 
     @SundialTask(name = "test2")
     @Override
