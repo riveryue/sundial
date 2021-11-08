@@ -54,16 +54,13 @@
                            th:task.cron="${task.cron}"
                            onclick="editTaskCron(this)">编辑cron</el-button>
 
-            <a style="cursor: pointer" th:task.id="${task.id}"
-               th:task.cron="${task.cron}"
-               onclick="editTaskCron(this)">编辑cron</a>
-            <a style="cursor: pointer" th:data-cron-key="${task.status}"
+            <el-button type="primary" style="cursor: pointer" th:data-cron-key="${task.status}"
                th:taskName="${task.taskName}"
-               onclick="runTaskCron(this)">执行</a>
-            <a style="cursor: pointer" th:task.id="${task.id}"
+                       onclick="runTaskCron(this)">执行</el-button>
+            <el-button type="primary" style="cursor: pointer" th:task.id="${task.id}"
                th:taskStatus="${task.status}"
                th:text="${task.status} == 1 ? '禁用':'启用'"
-               onclick="changeStatusTaskCron(this)"></a>
+                       onclick="changeStatusTaskCron(this)"></el-button>
             </el-row>
         </td>
     </tr>
