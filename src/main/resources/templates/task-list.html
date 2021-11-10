@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
     <title>定时任务管理</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -11,62 +12,47 @@
         text-align: center;
         margin: auto;
     }
-
-    table {
-        text-align: center;
-        width: 100%;
-    }
-
-    a {
-        border: 1px black solid;
-        color: white;
-        margin: 3px;
-        background-color: cornflowerblue;
-    }
-
-
-
 </style>
-<body>
+
+<body th:content='${cronList}'>
 <div id="app">
     <h1>任务调度中心</h1>
-    <table>
-        <thead>
-        <tr>
-            <td>序号</td>
-            <td>任务名称</td>
-            <td>状态</td>
-            <td>cron表达式</td>
-            <td>操作</td>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr th:each="task,iterStat:${cronList}">
-            <td th:text="${iterStat.count}"></td>
-            <td th:text="${task.taskName}"></td>
-            <td th:text="${task.status} == 1 ? '启用' : '禁用'"></td>
-            <td th:text="${task.cron}"></td>
-            <td>
-                <el-row>
-                    <el-button type="primary" style="cursor: pointer" th:task.id="${task.id}"
-                               th:task.cron="${task.cron}"
-                               onclick="editTaskCron(this)">编辑cron
-                    </el-button>
-
-                    <el-button type="primary" style="cursor: pointer" th:data-cron-key="${task.status}"
-                               th:taskName="${task.taskName}"
-                               onclick="runTaskCron(this)">执行
-                    </el-button>
-                    <el-button type="primary" style="cursor: pointer" th:task.id="${task.id}"
-                               th:taskStatus="${task.status}"
-                               th:text="${task.status} == 1 ? '禁用':'启用'"
-                               onclick="changeStatusTaskCron(this)"></el-button>
-                </el-row>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <el-table
+            :data="cronList"
+            style="width: 100%"
+            :row-class-name="tableRowClassName">
+        <el-table-column
+                type="index"
+                width="50" label="序号">
+        </el-table-column>
+        <el-table-column
+                prop="count"
+                label="数量"
+                width="50">
+        </el-table-column>
+        <el-table-column
+                prop="taskName"
+                label="任务名称"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="status"
+                label="状态"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="cron"
+                label="cron表达式">
+        </el-table-column>
+        <el-table-column
+                label="操作">
+            <template slot-scope="scope">
+                <el-button type="primary" @click="editTaskCron(scope.row)">编辑cron</el-button>
+                <el-button type="primary" @click="runTaskCron(scope.row)">执行</el-button>
+                <el-button type="primary" @click="changeStatusTaskCron(this)">{{scope.row.status}}</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
 </div>
 </body>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
@@ -74,61 +60,70 @@
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="text/javascript">
     new Vue({
-      el: '#app',
-      data: function() {
-        return { visible: false }
-      }
+        el: '#app',
+        data: {
+            cronList: JSON.parse(document.body.getAttribute("content")),
+        },
+        mounted() {
+            this.cronList.forEach(item => item.status = item.status == 1 ? '启用' : '禁用')
+        },
+        methods: {
+            editTaskCron(obj) {
+                let taskId = obj.id;
+                let originalCron = obj.cron;
+                let newCron = window.prompt("请输入cron表达式:", originalCron);
+                if (newCron === null || newCron === '') {
+                    return;
+                }
+                var task = {"id": taskId, "cron": newCron};
+                this.post("/sundial/update", "put", JSON.stringify(task));
+            },
+            runTaskCron(obj) {
+                let taskName = obj.taskName;
+                let formData = new FormData();
+                formData.append("taskName", taskName);
+                this.post("/sundial/execute?taskName=" + taskName, "get", null);
+            },
+            changeStatusTaskCron(obj) {
+                let taskId = obj.id;
+                let status = obj.taskStatus == 1 ? 2 : 1;
+                var task = {"id": parseInt(taskId), "status": parseInt(status)};
+                this.post("/sundial/update", "put", JSON.stringify(task));
+            },
+            post(reqUrl, reqMet, formData) {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState !== 4) {
+                        return;
+                    }
+                    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+                        var resJson = JSON.parse(xhr.responseText);
+                        if (resJson.data) {
+                            window.location.reload();
+                            alert('操作成功');
+                            return;
+                        } else {
+                            alert('system error');
+                        }
+                    } else {
+                        console.log("required failed " + xhr.status);
+                    }
+                };
+                xhr.open(reqMet, reqUrl, true);
+                xhr.setRequestHeader('content-type', 'application/json');
+                xhr.send(formData);
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            }
+        }
     })
 
-    function editTaskCron(obj) {
-        let taskId = obj.getAttribute("task.id");
-        let originalCron = obj.getAttribute("task.cron");
-        let newCron = window.prompt("请输入cron表达式:", originalCron);
-        if (newCron === null || newCron === '') {
-            return;
-        }
-        var task = {"id": taskId,"cron": newCron};
-        post("/sundial/update", "put", JSON.stringify(task));
-    }
-
-    function runTaskCron(obj) {
-        let taskName = obj.getAttribute("taskName");
-        let formData = new FormData();
-        formData.append("taskName", taskName);
-        post("/sundial/execute?taskName=" + taskName, "get", null);
-    }
-
-    function changeStatusTaskCron(obj) {
-        let taskId = obj.getAttribute("task.id");
-        let status = obj.getAttribute("taskStatus") == 1 ? 2 : 1;
-        var task = {"id": parseInt(taskId), "status": parseInt(status)};
-        post("/sundial/update", "put", JSON.stringify(task));
-    }
-
-    function post(reqUrl, reqMet, formData) {
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState !== 4) {
-                return;
-            }
-            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
-                var resJson = JSON.parse(xhr.responseText);
-                if (resJson.data) {
-                    window.location.reload();
-                    alert('操作成功');
-                    return;
-                } else {
-                    alert('system error');
-                }
-            } else {
-                console.log("required failed " + xhr.status);
-            }
-        };
-        xhr.open(reqMet, reqUrl, true);
-        xhr.setRequestHeader('content-type', 'application/json');
-        xhr.send(formData);
-    }
-
-
 </script>
+
 </html>
