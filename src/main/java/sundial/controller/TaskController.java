@@ -1,5 +1,6 @@
 package sundial.controller;
 
+import com.google.gson.Gson;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,7 +30,7 @@ public class TaskController {
     @GetMapping("/sundial/home")
     public ModelAndView taskList(Model model) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("cronList", taskConfService.query(new TaskConfQuery()));
+        modelAndView.addObject("cronList", new Gson().toJson(taskConfService.query(new TaskConfQuery())));
         modelAndView.setViewName("task-list");
         return modelAndView;
     }
