@@ -49,12 +49,13 @@
             <template slot-scope="scope">
                 <el-button type="primary" @click="editTaskCron(scope.row)">编辑cron</el-button>
                 <el-button type="primary" @click="runTaskCron(scope.row)">执行</el-button>
-                <el-button type="primary" @click="changeStatusTaskCron(this)">{{scope.row.status}}</el-button>
+                <el-button type="primary" @click="changeStatusTaskCron(scope.row)">{{scope.row.status === 1 ? "禁用": '启用'}}</el-button>
             </template>
         </el-table-column>
     </el-table>
 </div>
 </body>
+<script src="jq/jquery-1.12.4.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -65,9 +66,19 @@
             cronList: JSON.parse(document.body.getAttribute("content")),
         },
         mounted() {
-            this.cronList.forEach(item => item.status = item.status == 1 ? '启用' : '禁用')
+            this.initTable();
         },
         methods: {
+            initTable : function() {
+                $.ajax({
+                    type: "get",
+                    url: "/sundial/list",
+                    dataType: "json",
+                    success: function(json) {
+                        this.cronList = json;
+                    }
+                });
+            },
             editTaskCron(obj) {
                 let taskId = obj.id;
                 let originalCron = obj.cron;
@@ -86,7 +97,7 @@
             },
             changeStatusTaskCron(obj) {
                 let taskId = obj.id;
-                let status = obj.taskStatus == 1 ? 2 : 1;
+                let status = obj.status == 1 ? 2 : 1;
                 var task = {"id": parseInt(taskId), "status": parseInt(status)};
                 this.post("/sundial/update", "put", JSON.stringify(task));
             },
