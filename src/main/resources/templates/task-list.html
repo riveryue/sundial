@@ -20,6 +20,8 @@
     <el-table
             :data="cronList"
             style="width: 100%"
+            type="selection"
+            :row-style="getClass"
             :row-class-name="tableRowClassName">
         <el-table-column
                 type="index"
@@ -55,7 +57,6 @@
     </el-table>
 </div>
 </body>
-<script src="jq/jquery-1.12.4.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -124,17 +125,25 @@
                 xhr.setRequestHeader('content-type', 'application/json');
                 xhr.send(formData);
             },
-            tableRowClassName({row, rowIndex}) {
-                if (rowIndex === 1) {
-                    return 'warning-row';
-                } else if (rowIndex === 3) {
-                    return 'success-row';
+            handleSelectionChange(val) {
+				this.multipleSelection = val;
+				console.info(this.multipleSelection)
+			},
+            getClass(row) {
+                if (row.row.status === 1) {
+                    return this.enable;
+                } else if (row.row.status === 2) {
+                    return this.disable;
                 }
-                return '';
             }
         }
     })
-
+enable = {
+                "color": "green"
+            },
+            disable = {
+                "color": "red"
+            }
 </script>
 
 </html>

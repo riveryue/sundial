@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @author yao
+* @author yao
  */
 @Configuration
 public class SpringMvcConfig implements WebMvcConfigurer {
