@@ -12,7 +12,7 @@ public class Task2 implements SundialExecute {
     @Override
     public void execute() {
         Date date = new Date();
-        System.out.println(date + " zxcvvvvvvvvvvvvvvvv");
+        System.out.println(date + " task2");
     }
 
 }
