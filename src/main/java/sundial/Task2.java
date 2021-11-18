@@ -5,14 +5,16 @@ import sundial.annotation.SundialTask;
 
 import java.util.Date;
 
+/**
+ * @author yao
+ */
 @Component
 public class Task2 implements SundialExecute {
 
     @SundialTask(name = "test2")
     @Override
     public void execute() {
-        Date date = new Date();
-        System.out.println(date + " task2");
+        System.out.println(new Date() + " task2");
     }
 
 }
