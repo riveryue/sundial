@@ -97,7 +97,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
             //todo create custom exception
             throw new RuntimeException("occur error in create object via reflect");
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            e.printStackTrace();
+            log.error("occur error in call method via reflect ", e);
         }
         taskPool.put(taskName, sundialExecute);
     }
