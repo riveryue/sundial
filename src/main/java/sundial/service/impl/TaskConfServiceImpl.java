@@ -2,6 +2,7 @@ package sundial.service.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import sundial.SundialExecute;
 import sundial.TaskPool;
@@ -57,6 +58,7 @@ public class TaskConfServiceImpl implements TaskConfService {
 
     @Override
     public Integer insert(TaskConfDTO taskConfDTO) {
+        CacheProperties.Redis redis = new CacheProperties.Redis();
         TaskConfDO taskConfDO = new TaskConfDO();
         BeanUtils.copyProperties(taskConfDTO, taskConfDO);
         return taskConfDao.insert(taskConfDO);
