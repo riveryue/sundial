@@ -15,3 +15,5 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+zkIp: 192.168.1.103:2181
