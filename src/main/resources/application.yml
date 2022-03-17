@@ -7,13 +7,13 @@ spring:
     username: root
     password: qwer
 server:
-  port: 9091
+  port: 8081
 
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: sundial.entity
   configuration:
     map-underscore-to-camel-case: true
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImplcmd
 
 zkIp: 192.168.1.103:2181
