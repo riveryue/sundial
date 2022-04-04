@@ -14,7 +14,7 @@
     <name>sundial</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <zookeeper.version>5.2.0</zookeeper.version>
     </properties>
     <dependencies>
