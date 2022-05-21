@@ -18,8 +18,7 @@ public class Result<T> implements Serializable {
 
     private T data;
 
-    public static <T> Result ok(T data){
-        System.out.println();
+    public static <T> Result ok(T data) {
         Result<T> result = new Result<>();
         result.setData(data);
         result.setSuccess(true);
@@ -27,7 +26,6 @@ public class Result<T> implements Serializable {
     }
 
     public static Result ok(){
-        int i = 0;
         return ok(null);
     }
 }
