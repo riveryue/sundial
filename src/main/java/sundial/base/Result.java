@@ -26,6 +26,7 @@ public class Result<T> implements Serializable {
     }
 
     public static Result ok(){
+        int i = 0;
         return ok(null);
     }
 }
