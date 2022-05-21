@@ -19,6 +19,7 @@ public class Result<T> implements Serializable {
     private T data;
 
     public static <T> Result ok(T data){
+        System.out.println();
         Result<T> result = new Result<>();
         result.setData(data);
         result.setSuccess(true);
