@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="sundial.dao.TaskConfDao">
+<mapper namespace="com.yao.dao.TaskConfDao">
 
     <sql id="base_column">id, task_name, status, cron</sql>
 
-    <insert id="insert" parameterType="taskConfDO">
+    <insert id="insert" parameterType="com.yao.entity.TaskConfDO">
         insert into task_conf (task_name, status, cron) values (#{taskName}, #{status}, #{cron})
     </insert>
 
-    <update id="update" parameterType="taskConfDO">
+    <update id="update" parameterType="com.yao.entity.TaskConfDO">
         update task_conf
         <set>
             <if test="taskName != null">
@@ -24,15 +24,15 @@
         where ID = #{id}
     </update>
 
-    <select id="queryByTaskName" parameterType="string" resultType="taskConfDO">
+    <select id="queryByTaskName" parameterType="string" resultType="com.yao.entity.TaskConfDO">
         SELECT <include refid="base_column"/>  FROM task_conf where task_name = #{taskName}
     </select>
 
-    <select id="queryById" parameterType="java.lang.Integer" resultType="taskConfDO">
+    <select id="queryById" parameterType="java.lang.Integer" resultType="com.yao.entity.TaskConfDO">
         SELECT <include refid="base_column"/>  FROM task_conf where id = #{id}
     </select>
 
-    <select id="query" parameterType="sundial.query.TaskConfQuery" resultType="taskConfDO">
+    <select id="query" parameterType="com.yao.query.TaskConfQuery" resultType="com.yao.entity.TaskConfDO">
         SELECT <include refid="base_column"/>  FROM task_conf where 1 = 1
         <if test="id != null">
             and id = #{id}

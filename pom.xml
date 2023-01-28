@@ -8,7 +8,7 @@
         <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.umbrella</groupId>
+    <groupId>com.yao</groupId>
     <artifactId>sundial</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sundial</name>
@@ -97,6 +97,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -117,8 +118,13 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>localRepository</id>
+            <url>file:D:\.m2\repository</url>
+        </repository>
+    </distributionManagement>
 </project>
