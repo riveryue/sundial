@@ -34,7 +34,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
 
     private static ApplicationContext applicationContext;
 
-    private static HashSet<String> taskNameList = new HashSet<>();
+    private static final HashSet<String> TASK_NAME_LIST = new HashSet<>();
 
     @Autowired
     private TaskPool taskPool;
@@ -86,7 +86,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
         if (taskName.trim().length() == 0) {
             throw new RuntimeException("task name invalid, for[" + clazz + "#" + methodName + "] .");
         }
-        if (!taskNameList.add(taskName)) {
+        if (!TASK_NAME_LIST.add(taskName)) {
             throw new RuntimeException("task can't be duplicate in whole project, [" + taskName + "] already exist.");
         }
         SundialExecute sundialExecute = null;
