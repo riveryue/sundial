@@ -21,7 +21,7 @@ public interface SundialExecute extends Runnable {
     void execute();
 
     /**
-     * valid status of job if available
+     * valid status of schedule job if it's available
      */
     @Override
     default void run() {
@@ -40,9 +40,9 @@ public interface SundialExecute extends Runnable {
             return;
         }
 
-        String ZK_LOCK_PATH = "/distributeLock";
+        String zkLockPath = "/distributeLock";
         CuratorFramework client = SpringUtils.getBean(CuratorFrameworkConfig.class).curatorFramework();
-        final InterProcessMutex mutex = new InterProcessMutex(client, ZK_LOCK_PATH);
+        final InterProcessMutex mutex = new InterProcessMutex(client, zkLockPath);
         try {
             //获取锁资源
             boolean flag = mutex.acquire(1, TimeUnit.SECONDS);
