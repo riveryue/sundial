@@ -14,14 +14,4 @@ public class Task1 implements SundialExecute {
         log.info("test1 execute successfully");
     }
 
-//    @QuartzJob(name = "test2")
-//    public void print2() {
-//        System.out.println("1234");
-//    }
-//
-//    @QuartzJob(name = "test3")
-//    public void print3() {
-//        System.out.println("1234");
-//    }
-
 }
