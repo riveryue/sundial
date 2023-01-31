@@ -19,7 +19,7 @@ public class Task2 implements SundialExecute {
         } catch (InterruptedException e) {
             log.error("error in schedule ", e);
         }
-        log.info("schedule execute successfully");
+        log.info("test2 execute successfully");
     }
 
 }

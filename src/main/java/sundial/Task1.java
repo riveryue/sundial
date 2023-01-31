@@ -1,18 +1,17 @@
 package sundial;
 
-import sundial.annotation.SundialTask;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import sundial.annotation.SundialTask;
 
-import java.util.Date;
-
+@Slf4j
 @Component
 public class Task1 implements SundialExecute {
 
     @SundialTask(name = "test1")
     @Override
     public void execute() {
-        Date date = new Date();
-        System.out.println(date + " 1234");
+        log.info("test1 execute successfully");
     }
 
 //    @QuartzJob(name = "test2")
