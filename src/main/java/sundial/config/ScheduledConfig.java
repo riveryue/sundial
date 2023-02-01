@@ -70,13 +70,13 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
             for (Map.Entry<Method, SundialTask> taskEntry : annotatedMethods.entrySet()) {
                 Method executeMethod = taskEntry.getKey();
                 SundialTask task = taskEntry.getValue();
-                registJobHandler(task, bean, executeMethod);
+                registerJobHandler(task, bean, executeMethod);
                 methodHashMap.put((SundialExecute) bean, task.name());
             }
         }
     }
 
-    protected void registJobHandler(SundialTask sundialTask, Object bean, Method executeMethod) {
+    protected void registerJobHandler(SundialTask sundialTask, Object bean, Method executeMethod) {
         if (sundialTask == null) {
             return;
         }
