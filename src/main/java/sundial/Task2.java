@@ -15,7 +15,7 @@ public class Task2 implements SundialExecute {
     @Override
     public void execute() {
         try {
-            Thread.sleep(5000L);
+            Thread.sleep(3000L);
         } catch (InterruptedException e) {
             log.error("error in schedule ", e);
         }
