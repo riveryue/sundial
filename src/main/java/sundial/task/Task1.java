@@ -1,7 +1,8 @@
-package sundial;
+package sundial.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import sundial.SundialExecute;
 import sundial.annotation.SundialTask;
 
 /**
