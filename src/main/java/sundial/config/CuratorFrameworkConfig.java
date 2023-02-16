@@ -23,7 +23,7 @@ public class CuratorFrameworkConfig {
     public CuratorFramework curatorFramework() {
         final CuratorFramework client = CuratorFrameworkFactory.newClient(env.getProperty("zkIp"), new RetryNTimes(10, 5000));
         client.start();
-        log.info("zk status: {}", client.getState());
+        log.info("zookeeper status: {}", client.getState());
         return client;
     }
 
