@@ -1,5 +1,7 @@
 package sundial;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sundial.annotation.SundialTask;
 import sundial.config.CuratorFrameworkConfig;
 import sundial.constant.TaskStatus;
@@ -17,6 +19,8 @@ import java.util.concurrent.TimeUnit;
  * @author yao
  */
 public interface SundialExecute extends Runnable {
+
+    Logger logger = LoggerFactory.getLogger(SundialExecute.class);
 
     void execute();
 
@@ -48,16 +52,19 @@ public interface SundialExecute extends Runnable {
             boolean flag = mutex.acquire(1, TimeUnit.SECONDS);
             if (flag) {
                 execute();
+                logger.info("Acquired lock successfully, executing task...");
+            } else {
+                logger.warn("Failed to acquire lock, task execution skipped.");
             }
         } catch (Exception e) {
-
+            logger.error("An error occurred while trying to acquire lock or execute task", e);
         } finally {
             try {
                 mutex.release();
+                logger.info("Lock released successfully.");
             } catch (Exception e) {
-
+                logger.error("An error occurred while trying to release lock", e);
             }
         }
-
     }
 }
