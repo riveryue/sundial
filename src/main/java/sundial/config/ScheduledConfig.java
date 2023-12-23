@@ -1,8 +1,6 @@
 package sundial.config;
 
 import com.google.common.collect.Maps;
-import sundial.annotation.SundialTask;
-import sundial.service.TaskConfService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -12,18 +10,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import sundial.SundialExecute;
 import sundial.TaskPool;
+import sundial.annotation.SundialTask;
 import sundial.dto.TaskConfDTO;
+import sundial.service.TaskConfService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * @author yao
@@ -42,7 +44,11 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
     @Autowired
     private TaskConfService taskConfService;
 
+    private TaskScheduler taskScheduler;
+
     private static HashMap<SundialExecute, String> methodHashMap = Maps.newHashMap();
+
+    private Map<String, ScheduledFuture<?>> scheduledFutures = new HashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -89,9 +95,9 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
         if (!TASK_NAME_LIST.add(taskName)) {
             throw new RuntimeException("task can't be duplicate in whole project, [" + taskName + "] already exist.");
         }
-        SundialExecute sundialExecute = null;
+        SundialExecute job = null;
         try {
-            sundialExecute = (SundialExecute) clazz.getConstructor().newInstance();
+            job = (SundialExecute) clazz.getConstructor().newInstance();
         } catch (InstantiationException e) {
             log.error("occur error in create object via reflect ", e);
             //todo create custom exception
@@ -99,16 +105,28 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("occur error in call method via reflect ", e);
         }
-        taskPool.put(taskName, sundialExecute);
+        taskPool.put(taskName, job);
     }
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        this.taskScheduler = taskRegistrar.getScheduler();
         for (Map.Entry<SundialExecute, String> entry : methodHashMap.entrySet()) {
-            taskRegistrar.addTriggerTask(entry.getKey(), triggerContext -> {
+            ScheduledFuture<?> future = taskScheduler.schedule(entry.getKey(), triggerContext -> {
                 TaskConfDTO taskConfDTO = taskConfService.queryByTaskName(entry.getValue());
                 return new CronTrigger(taskConfDTO.getCron()).nextExecutionTime(triggerContext);
             });
+            scheduledFutures.put(entry.getValue(), future);
         }
     }
+
+    public void restartJob(SundialExecute job, TaskConfDTO taskConfDTO) {
+        ScheduledFuture<?> future = scheduledFutures.get(taskConfDTO.getTaskName());
+        if (future != null) {
+            future.cancel(true);
+        }
+        ScheduledFuture<?> newFuture = taskScheduler.schedule(job, triggerContext -> new CronTrigger(taskConfDTO.getCron()).nextExecutionTime(triggerContext));
+        scheduledFutures.put(taskConfDTO.getTaskName(), newFuture);
+    }
+
 }
