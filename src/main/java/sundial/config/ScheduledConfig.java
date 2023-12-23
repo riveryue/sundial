@@ -83,7 +83,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
         String taskName = sundialTask.name();
         Class<?> clazz = bean.getClass();
         String methodName = executeMethod.getName();
-        if (taskName.trim().length() == 0) {
+        if (taskName.trim().isEmpty()) {
             throw new RuntimeException("task name invalid, for[" + clazz + "#" + methodName + "] .");
         }
         if (!TASK_NAME_LIST.add(taskName)) {
