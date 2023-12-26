@@ -22,8 +22,9 @@ Sundial是一个基于Spring Schedule、Zookeeper和VUE实现的分布式定时�
 1. 克隆此仓库到本地
 2. 使用IntelliJ IDEA打开项目
 3. 确保本地已安装Maven、Java、MySQL、zookeeper环境
-4. 运行`mvn install`命令安装依赖
-5. 运行项目
+4. 往MySQL中存入的定时任务名称必须与源码中task注解的name属性一致
+5. 运行`mvn install`命令安装依赖
+6. 运行项目
 
 ## 贡献
 
