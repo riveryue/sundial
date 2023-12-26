@@ -1,11 +1,12 @@
 package sundial.service.impl;
 
-import sundial.dao.TaskConfDao;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sundial.SundialExecute;
 import sundial.TaskPool;
+import sundial.config.ScheduledConfig;
+import sundial.dao.TaskConfDao;
 import sundial.dto.TaskConfDTO;
 import sundial.entity.TaskConfDO;
 import sundial.query.TaskConfQuery;
@@ -25,6 +26,9 @@ public class TaskConfServiceImpl implements TaskConfService {
 
     @Autowired
     private TaskPool taskPool;
+
+    @Autowired
+    private ScheduledConfig scheduledConfig;
 
     @Override
     public TaskConfDTO queryByTaskName(String taskName) {
@@ -67,9 +71,12 @@ public class TaskConfServiceImpl implements TaskConfService {
         TaskConfDO taskConfDO = new TaskConfDO();
         BeanUtils.copyProperties(taskConfDTO, taskConfDO);
         TaskConfDTO existTask = this.queryById(taskConfDO.getId());
-        SundialExecute sundialExecute = taskPool.get(existTask.getTaskName());
+        SundialExecute job = taskPool.get(existTask.getTaskName());
+        if (job != null) {
+            scheduledConfig.restartJob(job, taskConfDTO);
+        }
         taskPool.remove(existTask.getTaskName());
-        taskPool.put(existTask.getTaskName(), sundialExecute);
+        taskPool.put(existTask.getTaskName(), job);
         return taskConfDao.update(taskConfDO);
     }
 }
