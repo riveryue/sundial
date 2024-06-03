@@ -73,7 +73,7 @@ public class TaskConfServiceImpl implements TaskConfService {
         TaskConfDTO existTask = this.queryById(taskConfDO.getId());
         SundialExecute job = taskPool.get(existTask.getTaskName());
         if (job != null) {
-            scheduledConfig.restartJob(job, taskConfDTO);
+            scheduledConfig.reSchedule(job, taskConfDTO);
         }
         taskPool.remove(existTask.getTaskName());
         taskPool.put(existTask.getTaskName(), job);

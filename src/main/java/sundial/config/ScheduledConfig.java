@@ -120,7 +120,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
         }
     }
 
-    public void restartJob(SundialExecute job, TaskConfDTO taskConfDTO) {
+    public void reSchedule(SundialExecute job, TaskConfDTO taskConfDTO) {
         ScheduledFuture<?> future = scheduledFutures.get(taskConfDTO.getTaskName());
         if (future != null) {
             future.cancel(true);
