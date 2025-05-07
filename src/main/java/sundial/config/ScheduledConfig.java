@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -36,7 +37,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
 
     private static ApplicationContext applicationContext;
 
-    private static final HashSet<String> TASK_NAME_LIST = new HashSet<>();
+    private static final Set<String> TASK_NAME_LIST = new HashSet<>();
 
     @Autowired
     private TaskPool taskPool;
