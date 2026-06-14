@@ -47,9 +47,9 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
 
     private TaskScheduler taskScheduler;
 
-    private static HashMap<SundialExecute, String> methodHashMap = Maps.newHashMap();
+    private static final HashMap<SundialExecute, String> METHOD_HASH_MAP = Maps.newHashMap();
 
-    private Map<String, ScheduledFuture<?>> scheduledFutures = new HashMap<>();
+    private final Map<String, ScheduledFuture<?>> SCHEDULED_FUTURES = new HashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -78,7 +78,7 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
                 Method executeMethod = taskEntry.getKey();
                 SundialTask task = taskEntry.getValue();
                 registerJobHandler(task, bean, executeMethod);
-                methodHashMap.put((SundialExecute) bean, task.name());
+                METHOD_HASH_MAP.put((SundialExecute) bean, task.name());
             }
         }
     }
@@ -112,22 +112,22 @@ public class ScheduledConfig implements ApplicationContextAware, SmartInitializi
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         this.taskScheduler = taskRegistrar.getScheduler();
-        for (Map.Entry<SundialExecute, String> entry : methodHashMap.entrySet()) {
+        for (Map.Entry<SundialExecute, String> entry : METHOD_HASH_MAP.entrySet()) {
             ScheduledFuture<?> future = taskScheduler.schedule(entry.getKey(), triggerContext -> {
                 TaskConfDTO taskConfDTO = taskConfService.queryByTaskName(entry.getValue());
-                return new CronTrigger(taskConfDTO.getCron()).nextExecutionTime(triggerContext);
+                return new CronTrigger(taskConfDTO.getCron()).nextExecution(triggerContext);
             });
-            scheduledFutures.put(entry.getValue(), future);
+            SCHEDULED_FUTURES.put(entry.getValue(), future);
         }
     }
 
     public void reSchedule(SundialExecute job, TaskConfDTO taskConfDTO) {
-        ScheduledFuture<?> future = scheduledFutures.get(taskConfDTO.getTaskName());
+        ScheduledFuture<?> future = SCHEDULED_FUTURES.get(taskConfDTO.getTaskName());
         if (future != null) {
             future.cancel(true);
         }
-        ScheduledFuture<?> newFuture = taskScheduler.schedule(job, triggerContext -> new CronTrigger(taskConfDTO.getCron()).nextExecutionTime(triggerContext));
-        scheduledFutures.put(taskConfDTO.getTaskName(), newFuture);
+        ScheduledFuture<?> newFuture = taskScheduler.schedule(job, triggerContext -> new CronTrigger(taskConfDTO.getCron()).nextExecution(triggerContext));
+        SCHEDULED_FUTURES.put(taskConfDTO.getTaskName(), newFuture);
     }
 
 }
